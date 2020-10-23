@@ -120,7 +120,7 @@ func RunPrecompiledContract(p PrecompiledContract, input []byte, suppliedGas uin
 type ecrecover struct{}
 
 func (c *ecrecover) RequiredGas(input []byte) uint64 {
-	return params.EcrecoverGas
+	return 0
 }
 
 func (c *ecrecover) Run(input []byte) ([]byte, error) {
@@ -162,7 +162,7 @@ type sha256hash struct{}
 // This method does not require any overflow checking as the input size gas costs
 // required for anything significant is so high it's impossible to pay for.
 func (c *sha256hash) RequiredGas(input []byte) uint64 {
-	return uint64(len(input)+31)/32*params.Sha256PerWordGas + params.Sha256BaseGas
+	return 0
 }
 func (c *sha256hash) Run(input []byte) ([]byte, error) {
 	h := sha256.Sum256(input)
@@ -177,7 +177,7 @@ type ripemd160hash struct{}
 // This method does not require any overflow checking as the input size gas costs
 // required for anything significant is so high it's impossible to pay for.
 func (c *ripemd160hash) RequiredGas(input []byte) uint64 {
-	return uint64(len(input)+31)/32*params.Ripemd160PerWordGas + params.Ripemd160BaseGas
+	return 0
 }
 func (c *ripemd160hash) Run(input []byte) ([]byte, error) {
 	ripemd := ripemd160.New()
@@ -193,7 +193,7 @@ type dataCopy struct{}
 // This method does not require any overflow checking as the input size gas costs
 // required for anything significant is so high it's impossible to pay for.
 func (c *dataCopy) RequiredGas(input []byte) uint64 {
-	return uint64(len(input)+31)/32*params.IdentityPerWordGas + params.IdentityBaseGas
+	return 0
 }
 func (c *dataCopy) Run(in []byte) ([]byte, error) {
 	return in, nil
@@ -272,9 +272,9 @@ func (c *bigModExp) RequiredGas(input []byte) uint64 {
 	gas.Div(gas, new(big.Int).SetUint64(params.ModExpQuadCoeffDiv))
 
 	if gas.BitLen() > 64 {
-		return math.MaxUint64
+		return 0
 	}
-	return gas.Uint64()
+	return 0
 }
 
 func (c *bigModExp) Run(input []byte) ([]byte, error) {
@@ -347,7 +347,7 @@ type bn256AddIstanbul struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bn256AddIstanbul) RequiredGas(input []byte) uint64 {
-	return params.Bn256AddGasIstanbul
+	return 0
 }
 
 func (c *bn256AddIstanbul) Run(input []byte) ([]byte, error) {
@@ -360,7 +360,7 @@ type bn256AddByzantium struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bn256AddByzantium) RequiredGas(input []byte) uint64 {
-	return params.Bn256AddGasByzantium
+	return 0
 }
 
 func (c *bn256AddByzantium) Run(input []byte) ([]byte, error) {
@@ -385,7 +385,7 @@ type bn256ScalarMulIstanbul struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bn256ScalarMulIstanbul) RequiredGas(input []byte) uint64 {
-	return params.Bn256ScalarMulGasIstanbul
+	return 0
 }
 
 func (c *bn256ScalarMulIstanbul) Run(input []byte) ([]byte, error) {
@@ -398,7 +398,7 @@ type bn256ScalarMulByzantium struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bn256ScalarMulByzantium) RequiredGas(input []byte) uint64 {
-	return params.Bn256ScalarMulGasByzantium
+	return 0
 }
 
 func (c *bn256ScalarMulByzantium) Run(input []byte) ([]byte, error) {
@@ -453,7 +453,7 @@ type bn256PairingIstanbul struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bn256PairingIstanbul) RequiredGas(input []byte) uint64 {
-	return params.Bn256PairingBaseGasIstanbul + uint64(len(input)/192)*params.Bn256PairingPerPointGasIstanbul
+	return 0
 }
 
 func (c *bn256PairingIstanbul) Run(input []byte) ([]byte, error) {
@@ -466,7 +466,7 @@ type bn256PairingByzantium struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bn256PairingByzantium) RequiredGas(input []byte) uint64 {
-	return params.Bn256PairingBaseGasByzantium + uint64(len(input)/192)*params.Bn256PairingPerPointGasByzantium
+	return 0
 }
 
 func (c *bn256PairingByzantium) Run(input []byte) ([]byte, error) {
@@ -481,7 +481,7 @@ func (c *blake2F) RequiredGas(input []byte) uint64 {
 	if len(input) != blake2FInputLength {
 		return 0
 	}
-	return uint64(binary.BigEndian.Uint32(input[0:4]))
+	return 0
 }
 
 const (
@@ -546,7 +546,7 @@ type bls12381G1Add struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bls12381G1Add) RequiredGas(input []byte) uint64 {
-	return params.Bls12381G1AddGas
+	return 0
 }
 
 func (c *bls12381G1Add) Run(input []byte) ([]byte, error) {
@@ -584,7 +584,7 @@ type bls12381G1Mul struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bls12381G1Mul) RequiredGas(input []byte) uint64 {
-	return params.Bls12381G1MulGas
+	return 0
 }
 
 func (c *bls12381G1Mul) Run(input []byte) ([]byte, error) {
@@ -634,7 +634,7 @@ func (c *bls12381G1MultiExp) RequiredGas(input []byte) uint64 {
 		discount = params.Bls12381MultiExpDiscountTable[dLen-1]
 	}
 	// Calculate gas and return the result
-	return (uint64(k) * params.Bls12381G1MulGas * discount) / 1000
+	return 0
 }
 
 func (c *bls12381G1MultiExp) Run(input []byte) ([]byte, error) {
@@ -677,7 +677,7 @@ type bls12381G2Add struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bls12381G2Add) RequiredGas(input []byte) uint64 {
-	return params.Bls12381G2AddGas
+	return 0
 }
 
 func (c *bls12381G2Add) Run(input []byte) ([]byte, error) {
@@ -715,7 +715,7 @@ type bls12381G2Mul struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bls12381G2Mul) RequiredGas(input []byte) uint64 {
-	return params.Bls12381G2MulGas
+	return 0
 }
 
 func (c *bls12381G2Mul) Run(input []byte) ([]byte, error) {
@@ -765,7 +765,7 @@ func (c *bls12381G2MultiExp) RequiredGas(input []byte) uint64 {
 		discount = params.Bls12381MultiExpDiscountTable[dLen-1]
 	}
 	// Calculate gas and return the result
-	return (uint64(k) * params.Bls12381G2MulGas * discount) / 1000
+	return 0
 }
 
 func (c *bls12381G2MultiExp) Run(input []byte) ([]byte, error) {
@@ -808,7 +808,7 @@ type bls12381Pairing struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bls12381Pairing) RequiredGas(input []byte) uint64 {
-	return params.Bls12381PairingBaseGas + uint64(len(input)/384)*params.Bls12381PairingPerPairGas
+	return 0
 }
 
 func (c *bls12381Pairing) Run(input []byte) ([]byte, error) {
@@ -887,7 +887,7 @@ type bls12381MapG1 struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bls12381MapG1) RequiredGas(input []byte) uint64 {
-	return params.Bls12381MapG1Gas
+	return 0
 }
 
 func (c *bls12381MapG1) Run(input []byte) ([]byte, error) {
@@ -922,7 +922,7 @@ type bls12381MapG2 struct{}
 
 // RequiredGas returns the gas required to execute the pre-compiled contract.
 func (c *bls12381MapG2) RequiredGas(input []byte) uint64 {
-	return params.Bls12381MapG2Gas
+	return 0
 }
 
 func (c *bls12381MapG2) Run(input []byte) ([]byte, error) {
