@@ -188,17 +188,17 @@ func gasSStoreEIP2200(evm *EVM, contract *Contract, stack *Stack, mem *Memory, m
 	value := common.Hash(y.Bytes32())
 
 	if current == value { // noop (1)
-		return params.SstoreNoopGasEIP2200, nil
+		return 0, nil
 	}
 	original := evm.StateDB.GetCommittedState(contract.Address(), common.Hash(x.Bytes32()))
 	if original == current {
 		if original == (common.Hash{}) { // create slot (2.1.1)
-			return params.SstoreInitGasEIP2200, nil
+			return 0, nil
 		}
 		if value == (common.Hash{}) { // delete slot (2.1.2b)
 			evm.StateDB.AddRefund(params.SstoreClearRefundEIP2200)
 		}
-		return params.SstoreCleanGasEIP2200, nil // write existing slot (2.1.2)
+		return 0, nil // write existing slot (2.1.2)
 	}
 	if original != (common.Hash{}) {
 		if current == (common.Hash{}) { // recreate slot (2.2.1.1)
