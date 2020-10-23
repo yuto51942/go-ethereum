@@ -17,7 +17,6 @@
 package vm
 
 import (
-	"fmt"
 	"hash"
 	"sync/atomic"
 
@@ -296,8 +295,6 @@ func (in *EVMInterpreter) Run(contract *Contract, input []byte, readOnly bool) (
 		case err != nil:
 			return nil, err
 		case operation.reverts:
-			fmt.Println(op)
-			fmt.Println(operation)
 			return res, ErrExecutionReverted
 		case operation.halts:
 			return res, nil
